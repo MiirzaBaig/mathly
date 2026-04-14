@@ -42,16 +42,19 @@ export default function Header({ onOpenHistory, historyCount = 0, showSavedPulse
         }}
       >
         <div
-          className="flex items-center justify-between px-5 sm:px-7"
+          className="flex items-center justify-between px-4 sm:px-7"
           style={{
             height: 50,
             borderRadius: 9999,
-            background: scrolled ? "rgba(20,20,23,0.86)" : "rgba(12,12,14,0.72)",
-            backdropFilter: "blur(14px)",
-            WebkitBackdropFilter: "blur(14px)",
-            border: "1px solid rgba(255,255,255,0.06)",
-            boxShadow: "0 4px 24px rgba(0,0,0,0.32)",
-            transition: "background 300ms ease",
+            backgroundColor: scrolled ? "rgba(18,18,20,0.72)" : "rgba(10,10,12,0.58)",
+            backgroundImage:
+              "linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 22%, rgba(255,255,255,0.0) 100%)",
+            backdropFilter: "blur(22px) saturate(140%)",
+            WebkitBackdropFilter: "blur(22px) saturate(140%)",
+            border: "1px solid rgba(255,255,255,0.10)",
+            boxShadow:
+              "0 10px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08)",
+            transition: "background 250ms ease, border-color 250ms ease",
           }}
         >
           {/* Brand */}
@@ -59,8 +62,8 @@ export default function Header({ onOpenHistory, historyCount = 0, showSavedPulse
             <LogoFull size={25} />
           </Link>
 
-          {/* Center nav — YC-style minimal */}
-          <nav className="hidden sm:flex items-center gap-1.5">
+          {/* Center nav — always visible (mobile + desktop) */}
+          <nav className="flex items-center gap-1">
             {[
               { href: "/how", label: "HOW" },
               { href: "/about", label: "ABOUT" },
@@ -70,10 +73,10 @@ export default function Header({ onOpenHistory, historyCount = 0, showSavedPulse
                 <Link
                   key={href}
                   href={href}
-                  className="relative px-3 py-1.5 rounded-lg text-xs font-semibold tracking-[0.14em] transition-all duration-200"
+                  className="relative px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold tracking-[0.14em] transition-all duration-200"
                   style={{
                     color: active ? "var(--text-primary)" : "var(--text-muted)",
-                    background: "transparent",
+                    background: active ? "rgba(255,255,255,0.06)" : "transparent",
                   }}
                 >
                   {label}
@@ -93,28 +96,49 @@ export default function Header({ onOpenHistory, historyCount = 0, showSavedPulse
           {/* Right */}
           <div className="flex items-center gap-2">
             {onOpenHistory && (
-              <button
+              <motion.button
                 onClick={onOpenHistory}
-                className="relative h-8 px-2.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="relative h-[30px] pl-2 pr-1.5 rounded-full flex items-center gap-1.5 cursor-pointer"
                 style={{
-                  color: "var(--text-secondary)",
-                  background: "rgba(255,255,255,0.04)",
+                  background: "rgba(255,255,255,0.05)",
                   border: "1px solid rgba(255,255,255,0.08)",
                 }}
                 title="Open solve history"
               >
-                <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
-                  <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.4" />
-                  <path d="M7 3.8v3.4l2.1 1.3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 3v5l3.5 2" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle cx="8" cy="8" r="6.25" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5" />
                 </svg>
-                <span>{historyCount}</span>
+                <span
+                  className="text-[11px] font-medium"
+                  style={{ color: "rgba(255,255,255,0.5)" }}
+                >
+                  solves
+                </span>
+                <span
+                  className="tabular-nums h-[20px] px-1.5 rounded-full text-[10px] font-semibold flex items-center justify-center"
+                  style={{
+                    color: "rgba(255,255,255,0.7)",
+                    background: "rgba(255,255,255,0.08)",
+                    minWidth: 20,
+                  }}
+                >
+                  {historyCount}
+                </span>
                 {showSavedPulse && (
-                  <span
-                    className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full"
-                    style={{ background: "#22c55e", boxShadow: "0 0 0 4px rgba(34,197,94,0.2)" }}
+                  <motion.span
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full"
+                    style={{
+                      background: "#8b5cf6",
+                      boxShadow: "0 0 6px rgba(139,92,246,0.5)",
+                    }}
                   />
                 )}
-              </button>
+              </motion.button>
             )}
             <ApiUsageBadge />
           </div>
