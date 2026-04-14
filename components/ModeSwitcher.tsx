@@ -23,7 +23,7 @@ export default function ModeSwitcher({ mode, onChange }: ModeSwitcherProps) {
         <button
           key={m}
           onClick={() => onChange(m)}
-          className="relative px-6 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] rounded-full transition-colors"
+          className="relative px-4 sm:px-6 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] rounded-full transition-colors"
           style={{
             color: mode === m ? "white" : "var(--text-muted)",
             zIndex: 1,

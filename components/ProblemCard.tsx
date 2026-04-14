@@ -29,7 +29,7 @@ export default function ProblemCard({ problem, index, onFollowup }: ProblemCardP
     >
       {/* Card Header */}
       <div
-        className="flex items-start gap-4 p-6 cursor-pointer select-none"
+        className="flex items-start gap-4 p-5 sm:p-6 cursor-pointer select-none"
         style={{ borderBottom: collapsed ? "none" : "1px solid rgba(255,255,255,0.11)" }}
         onClick={() => !problem.isLoading && setCollapsed((c) => !c)}
       >
@@ -99,7 +99,7 @@ export default function ProblemCard({ problem, index, onFollowup }: ProblemCardP
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
             style={{ overflow: "hidden" }}
           >
-            <div className="px-6 pb-6 pt-1 space-y-4">
+            <div className="px-5 sm:px-6 pb-6 pt-1 space-y-4">
               {/* Loading skeleton */}
               {problem.isLoading && (
                 <div className="pt-4">

@@ -7,7 +7,13 @@ import { usePathname } from "next/navigation";
 import { LogoFull } from "./Logo";
 import ApiUsageBadge from "./ApiUsageBadge";
 
-export default function Header() {
+interface HeaderProps {
+  onOpenHistory?: () => void;
+  historyCount?: number;
+  showSavedPulse?: boolean;
+}
+
+export default function Header({ onOpenHistory, historyCount = 0, showSavedPulse = false }: HeaderProps) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
 
@@ -85,7 +91,33 @@ export default function Header() {
           </nav>
 
           {/* Right */}
-          <ApiUsageBadge />
+          <div className="flex items-center gap-2">
+            {onOpenHistory && (
+              <button
+                onClick={onOpenHistory}
+                className="relative h-8 px-2.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold"
+                style={{
+                  color: "var(--text-secondary)",
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                }}
+                title="Open solve history"
+              >
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+                  <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.4" />
+                  <path d="M7 3.8v3.4l2.1 1.3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <span>{historyCount}</span>
+                {showSavedPulse && (
+                  <span
+                    className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full"
+                    style={{ background: "#22c55e", boxShadow: "0 0 0 4px rgba(34,197,94,0.2)" }}
+                  />
+                )}
+              </button>
+            )}
+            <ApiUsageBadge />
+          </div>
         </div>
       </div>
     </motion.header>

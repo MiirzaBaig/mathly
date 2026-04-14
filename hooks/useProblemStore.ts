@@ -159,5 +159,9 @@ export function useProblemStore(onApiSuccess?: () => void) {
     [updateProblem]
   );
 
-  return { problems, addProblem, addFollowup, clearError };
+  const restoreProblem = useCallback((restored: Problem) => {
+    setProblems((prev) => [restored, ...prev.filter((p) => p.id !== restored.id)]);
+  }, []);
+
+  return { problems, addProblem, addFollowup, clearError, restoreProblem };
 }
