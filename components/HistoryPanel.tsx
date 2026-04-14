@@ -112,10 +112,18 @@ export default function HistoryPanel({
                       const active = activeId === session.id;
 
                       return (
-                        <button
+                        <div
                           key={session.id}
                           onClick={() => onRestore(session)}
-                          className="w-full text-left p-3 rounded-xl relative"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              onRestore(session);
+                            }
+                          }}
+                          role="button"
+                          tabIndex={0}
+                          className="w-full text-left p-3 rounded-xl relative cursor-pointer"
                           style={{
                             background: active ? "rgba(139,92,246,0.14)" : "rgba(255,255,255,0.02)",
                             border: active ? "1px solid rgba(139,92,246,0.4)" : "1px solid rgba(255,255,255,0.06)",
@@ -165,7 +173,7 @@ export default function HistoryPanel({
                               del
                             </button>
                           </div>
-                        </button>
+                        </div>
                       );
                     })}
                   </div>

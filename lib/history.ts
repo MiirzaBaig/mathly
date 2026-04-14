@@ -1,5 +1,5 @@
 import type { ChatMessage } from "./api";
-import type { Problem } from "@/hooks/useProblemStore";
+import type { SolutionStep } from "./parseSteps";
 
 export const HISTORY_KEY = "mathly-history";
 const HISTORY_LIMIT = 50;
@@ -12,6 +12,16 @@ export interface HistorySession {
   ocrText: string | null;
   solutionMarkdown: string;
   chatHistory: ChatMessage[];
+  steps: SolutionStep[];
+}
+
+export interface ProblemSnapshot {
+  id: string;
+  originalInput: string | null;
+  originalImage: string | null;
+  ocrText: string | null;
+  chatHistory: ChatMessage[];
+  steps: SolutionStep[];
 }
 
 export function readHistory(): HistorySession[] {
@@ -55,7 +65,7 @@ function compactChatHistory(chatHistory: ChatMessage[]): ChatMessage[] {
   });
 }
 
-function getLatestSolutionMarkdown(problem: Problem): string {
+function getLatestSolutionMarkdown(problem: ProblemSnapshot): string {
   const latestAssistant = [...problem.chatHistory].reverse().find((m) => m.type === "assistant");
   if (latestAssistant?.solution_md_content?.trim()) return latestAssistant.solution_md_content;
   if (latestAssistant?.message?.trim()) return latestAssistant.message;
@@ -97,7 +107,7 @@ export function upsertHistorySession(session: HistorySession): HistorySession[] 
   return next;
 }
 
-export async function buildHistorySession(problem: Problem): Promise<HistorySession> {
+export async function buildHistorySession(problem: ProblemSnapshot): Promise<HistorySession> {
   const imageThumbnail = await createThumbnail(problem.originalImage);
   return {
     id: problem.id,
@@ -107,6 +117,7 @@ export async function buildHistorySession(problem: Problem): Promise<HistorySess
     ocrText: problem.ocrText,
     solutionMarkdown: getLatestSolutionMarkdown(problem),
     chatHistory: compactChatHistory(problem.chatHistory),
+    steps: problem.steps,
   };
 }
 

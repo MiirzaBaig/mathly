@@ -7,12 +7,23 @@ import HeroZone from "@/components/HeroZone";
 import ProblemCard from "@/components/ProblemCard";
 import PracticeView from "@/components/PracticeView";
 import ExamRescueDrawer from "@/components/ExamRescueDrawer";
+import HistoryPanel from "@/components/HistoryPanel";
 import ModeSwitcher, { type AppMode } from "@/components/ModeSwitcher";
 import InputBar from "@/components/InputBar";
 import Toast, { type ToastData } from "@/components/Toast";
-import { useProblemStore } from "@/hooks/useProblemStore";
+import { useProblemStore, type Problem } from "@/hooks/useProblemStore";
 import { useApiUsage } from "@/hooks/useApiUsage";
 import { buildExamRescueCards } from "@/lib/examRescue";
+import {
+  buildHistorySession,
+  clearHistorySessions,
+  readHistory,
+  removeHistorySession,
+  upsertHistorySession,
+  type HistorySession,
+} from "@/lib/history";
+import { parseSteps } from "@/lib/parseSteps";
+import type { ChatMessage } from "@/lib/api";
 
 let toastCounter = 0;
 
@@ -22,13 +33,17 @@ export default function Home() {
   const [toasts, setToasts] = useState<ToastData[]>([]);
   const [selectedExample, setSelectedExample] = useState("");
   const [appMode, setAppMode] = useState<AppMode>("solve");
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historySessions, setHistorySessions] = useState<HistorySession[]>([]);
+  const [showSavedPulse, setShowSavedPulse] = useState(false);
+  const savedRevisionRef = useRef<Record<string, string>>({});
 
   const addToast = useCallback((message: string, type: ToastData["type"] = "error") => {
     const id = `toast-${++toastCounter}`;
     setToasts((prev) => [...prev, { id, message, type }]);
   }, []);
 
-  const { problems, addProblem, addFollowup } = useProblemStore(
+  const { problems, addProblem, addFollowup, restoreProblem } = useProblemStore(
     useCallback(() => {
       if (process.env.NEXT_PUBLIC_USE_MOCK !== "true") {
         increment();
@@ -39,6 +54,27 @@ export default function Home() {
   const isAnyLoading = problems.some((p) => p.isLoading);
   const hasProblems = problems.length > 0;
   const activeProblem = problems[0] ?? null;
+
+  useEffect(() => {
+    setHistorySessions(readHistory());
+  }, []);
+
+  useEffect(() => {
+    const persist = async () => {
+      const finished = problems.filter((p) => !p.isLoading && !p.isFollowupLoading && !p.error && p.steps.length > 0);
+      for (const p of finished) {
+        const signature = `${p.chatHistory.length}-${p.steps.length}-${p.ocrText ?? ""}-${p.originalInput ?? ""}`;
+        if (savedRevisionRef.current[p.id] === signature) continue;
+        savedRevisionRef.current[p.id] = signature;
+        const session = await buildHistorySession(p);
+        const next = upsertHistorySession(session);
+        setHistorySessions(next);
+        setShowSavedPulse(true);
+        window.setTimeout(() => setShowSavedPulse(false), 1000);
+      }
+    };
+    void persist();
+  }, [problems]);
 
   const rescueCards = useMemo(() => {
     if (!activeProblem || activeProblem.isLoading || activeProblem.steps.length === 0) return [];
@@ -101,10 +137,56 @@ export default function Home() {
     [addToast]
   );
 
+  const handleRestoreSession = useCallback(
+    (session: HistorySession) => {
+      const reconstructedChat: ChatMessage[] = session.chatHistory.map((m) => ({
+        type: m.type,
+        message: m.message,
+        solution_md_content: m.solution_md_content,
+      }));
+
+      const restoredProblem: Problem = {
+        id: session.id,
+        chatHistory: reconstructedChat,
+        steps:
+          session.steps?.length > 0
+            ? session.steps
+            : parseSteps(session.solutionMarkdown, `restored-${session.id}`),
+        originalInput: session.originalInput,
+        originalImage: session.imageThumbnail,
+        ocrText: session.ocrText,
+        isLoading: false,
+        isFollowupLoading: false,
+        error: null,
+        createdAt: session.timestamp,
+      };
+
+      restoreProblem(restoredProblem);
+      setAppMode("solve");
+      setHistoryOpen(false);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [restoreProblem]
+  );
+
+  const handleDeleteSession = useCallback((sessionId: string) => {
+    const next = removeHistorySession(sessionId);
+    setHistorySessions(next);
+  }, []);
+
+  const handleClearHistory = useCallback(() => {
+    clearHistorySessions();
+    setHistorySessions([]);
+  }, []);
+
   return (
     <div style={{ background: "var(--bg-primary)", minHeight: "100dvh" }}>
       <div className="relative">
-        <Header />
+        <Header
+          onOpenHistory={() => setHistoryOpen(true)}
+          historyCount={historySessions.length}
+          showSavedPulse={showSavedPulse}
+        />
 
         {!hasProblems ? (
           <HeroZone
@@ -200,6 +282,16 @@ export default function Home() {
         {/* Floating Exam Rescue (only in solve mode with a solution) */}
         {appMode === "solve" && <ExamRescueDrawer cards={rescueCards} />}
       </div>
+
+      <HistoryPanel
+        open={historyOpen}
+        sessions={historySessions}
+        activeId={activeProblem?.id ?? null}
+        onClose={() => setHistoryOpen(false)}
+        onRestore={handleRestoreSession}
+        onDelete={handleDeleteSession}
+        onClearAll={handleClearHistory}
+      />
 
       <Toast toasts={toasts} onDismiss={dismissToast} />
     </div>
