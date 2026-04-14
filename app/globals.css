@@ -1,26 +1,434 @@
 @import "tailwindcss";
+@import "katex/dist/katex.min.css";
 
+/* ─────────────────────────────────────────
+   CSS Variables – Dark Luxe Palette
+───────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-primary: #09090b;
+  --bg-secondary: #0c0c0e;
+  --bg-card: #141417;
+  --bg-card-hover: #161618;
+  --bg-card-solid: #141417;
+
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+
+  --accent-solid: #8b5cf6;
+
+  --border-subtle: #1e1e22;
+
+  --success: #22c55e;
+  --error: #ef4444;
+  --warning: #f59e0b;
+
+  --shadow-card: none;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ─────────────────────────────────────────
+   Base
+───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(139, 92, 246, 0.3);
+  color: var(--text-primary);
+}
+
+/* ─────────────────────────────────────────
+   Scrollbar
+───────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+/* Background is intentionally flat + matte. */
+
+/* ─────────────────────────────────────────
+   KaTeX Dark Theme Overrides
+───────────────────────────────────────── */
+.katex {
+  font-size: 1.2em;
+  color: var(--text-primary) !important;
+}
+
+.katex-display {
+  margin: 1rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.5rem 0;
+}
+
+.katex-display > .katex {
+  font-size: 1.3em;
+  color: var(--text-primary) !important;
+}
+
+.katex .mfrac .frac-line {
+  background: var(--accent-solid) !important;
+  opacity: 0.6;
+}
+
+.katex .mopen,
+.katex .mclose {
+  color: rgba(244, 244, 245, 0.6) !important;
+}
+
+/* ─────────────────────────────────────────
+   Markdown / Math Content
+───────────────────────────────────────── */
+.math-content h2 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  margin-bottom: 0.7rem;
+  margin-top: 0;
+  line-height: 1.35;
+}
+
+.math-content h3 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.4rem;
+  margin-top: 0;
+}
+
+.math-content p {
+  color: rgba(244, 244, 245, 0.88);
+  font-size: 1rem;
+  line-height: 1.78;
+  letter-spacing: 0.01em;
+  margin: 0 0 0.75rem 0;
+}
+
+.math-content p:last-child { margin-bottom: 0; }
+
+.math-content strong { color: var(--text-primary); font-weight: 600; }
+
+.math-content code {
+  background: rgba(139, 92, 246, 0.12);
+  border: 1.5px solid rgba(139, 92, 246, 0.25);
+  color: var(--accent-solid);
+  padding: 0.15em 0.45em;
+  border-radius: 6px;
+  font-size: 0.85em;
+  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+}
+
+.math-content ul,
+.math-content ol {
+  padding-left: 1.25rem;
+  margin-bottom: 0.6rem;
+}
+
+.math-content li {
+  color: rgba(244, 244, 245, 0.88);
+  font-size: 1rem;
+  line-height: 1.75;
+  letter-spacing: 0.01em;
+  margin-bottom: 0.25rem;
+}
+
+/* ─────────────────────────────────────────
+   Animations
+───────────────────────────────────────── */
+@keyframes scan-sweep {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(500%); opacity: 0; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%      { transform: translateY(-8px); }
+}
+
+@keyframes gradient-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.1); }
+  50%      { box-shadow: 0 0 40px rgba(139, 92, 246, 0.25); }
+}
+
+@keyframes draw {
+  from { stroke-dashoffset: 1; }
+  to   { stroke-dashoffset: 0; }
+}
+
+@keyframes particle-drift {
+  0%, 100% { transform: translate(0, 0); opacity: 0; }
+  10%      { opacity: 0.7; }
+  90%      { opacity: 0.7; }
+  100%     { transform: translate(var(--dx, 20px), var(--dy, -30px)); opacity: 0; }
+}
+
+.animate-scan { animation: scan-sweep 2.2s ease-in-out infinite; }
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-glow-pulse { animation: glow-pulse 2s ease-in-out infinite; }
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* SVG sketch draw-on */
+.sketch-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 1.5s ease-out forwards;
+}
+
+.sketch-draw-delayed {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 1.2s ease-out 0.6s forwards;
+}
+
+/* ─────────────────────────────────────────
+   Component Classes
+───────────────────────────────────────── */
+.glass-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: none;
+  border-radius: 12px;
+}
+
+.glass-card:hover {
+  background: var(--bg-card-hover);
+  border-color: #2a2a2e;
+}
+
+/* Drop zone — no default dashed border, handled by animated-border */
+.drop-zone {
+  background: var(--bg-card);
+  border: none;
+  border-radius: 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.drop-zone:hover,
+.drop-zone.drag-over {
+  background: rgba(139, 92, 246, 0.05);
+  box-shadow: 0 0 60px rgba(139, 92, 246, 0.12), inset 0 0 60px rgba(139, 92, 246, 0.04);
+}
+
+/* Gradient button with glow */
+.btn-gradient {
+  background: var(--accent-solid);
+  color: white;
+  font-weight: 600;
+  border-radius: 12px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.btn-gradient::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0);
+  transition: background 0.2s;
+}
+
+.btn-gradient:hover {
+  background: #9a74ff;
+  transform: translateY(-2px);
+}
+.btn-gradient:hover::after { background: rgba(255, 255, 255, 0.1); }
+.btn-gradient:active { transform: scale(0.97) translateY(0); }
+.btn-gradient:disabled { opacity: 0.35; cursor: not-allowed; box-shadow: none; }
+
+/* Chip with position relative for per-chip gradient border */
+.chip {
+  position: relative;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: 999px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.chip:hover {
+  border-color: rgba(139, 92, 246, 0.5);
+  background: rgba(139, 92, 246, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.15);
+}
+
+.chip:active { transform: translateY(0) scale(0.97); }
+
+/* Glass input */
+.math-input {
+  background: var(--bg-card);
+  border: 1px solid #2a2a2e;
+  color: var(--text-primary);
+  border-radius: 12px;
+  box-shadow: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.math-input:focus {
+  outline: none;
+  border-color: var(--accent-solid);
+  box-shadow: none;
+  background: var(--bg-card-hover);
+}
+
+.math-input::placeholder { color: var(--text-muted); }
+
+/* Skeleton with gradient shimmer */
+.skeleton {
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(139, 92, 246, 0.06) 35%,
+    rgba(6, 182, 212, 0.06) 50%,
+    rgba(139, 92, 246, 0.06) 65%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+/* ─────────────────────────────────────────
+   Flow Connectors between Solution Cards
+───────────────────────────────────────── */
+.flow-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 16px;
+  height: 22px;
+  position: relative;
+  width: 38px;
+}
+
+.flow-connector-line {
+  width: 1px;
+  flex: 1;
+  border-radius: 999px;
+  transform-origin: top;
+  filter: none;
+}
+
+.flow-connector-node {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  border: none;
+}
+
+.flow-connector-node-bottom {
+  bottom: 0;
+}
+
+.flow-connector-node:not(.flow-connector-node-bottom) {
+  top: -1px;
+}
+
+/* ─────────────────────────────────────────
+   Solution Card Hover Glow
+───────────────────────────────────────── */
+.solution-card {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.solution-card:hover {
+  border-color: #2a2a2e !important;
+  box-shadow: none !important;
+}
+
+.solution-card .math-content .katex { font-size: 1.16em; }
+
+.solution-card .katex-display { margin: 0.9rem 0; padding: 0.35rem 0; }
+
+.solution-card .math-content p,
+.solution-card .math-content li {
+  font-size: 0.98rem;
+  line-height: 1.75;
+}
+
+@keyframes followup-pulse {
+  0%, 100% {
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 rgba(139, 92, 246, 0);
+  }
+  50% {
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.09), 0 0 26px rgba(139, 92, 246, 0.16);
+  }
+}
+
+.followup-shell {
+  animation: followup-pulse 2.8s ease-in-out infinite;
+}
+
+/* ─────────────────────────────────────────
+   Focus Ring
+───────────────────────────────────────── */
+*:focus-visible {
+  outline: 2px solid var(--accent-solid);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ─────────────────────────────────────────
+   Reduced Motion
+───────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .gradient-mesh::before,
+  .gradient-mesh::after,
+  .gradient-mesh-extra,
+  .animate-float,
+  .animate-glow-pulse {
+    animation: none !important;
+  }
+  .animated-border::before {
+    animation: none !important;
+    background: var(--accent-gradient);
+    opacity: 0.3;
+  }
 }
