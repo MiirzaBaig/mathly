@@ -17,11 +17,20 @@ interface HeroZoneProps {
   onAutoSubmitDone: () => void;
 }
 
+const blurUp = {
+  hidden: { opacity: 0, y: 20, filter: "blur(10px)" },
+  visible: { opacity: 1, y: 0, filter: "blur(0px)" },
+};
+
 function Subtext({ text }: { text: string }) {
   return (
-    <p className="text-base sm:text-lg max-w-md mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.55 }}>
+    <motion.p
+      variants={blurUp}
+      className="text-base sm:text-lg max-w-md mx-auto"
+      style={{ color: "var(--text-secondary)", lineHeight: 1.55 }}
+    >
       {text}
-    </p>
+    </motion.p>
   );
 }
 
@@ -67,9 +76,12 @@ export default function HeroZone({
     <div className="flex flex-col items-center px-4 pt-32 pb-10 min-h-dvh">
       {/* Headline */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: {},
+          visible: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
+        }}
         className="text-center mb-12 relative"
       >
         <h1
@@ -82,22 +94,29 @@ export default function HeroZone({
             color: "var(--text-primary)",
           }}
         >
-          Snap it.{" "}
-          <span
-            className="relative inline-block"
-            style={{
-              color: "var(--accent-solid)",
-            }}
-          >
-            Solve it.
-          </span>
-          {" "}Get it.
+          {["Snap it.", "Solve it.", "Get it."].map((word, i) => (
+            <motion.span
+              key={i}
+              variants={blurUp}
+              transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className="inline-block"
+              style={i === 1 ? { color: "var(--accent-solid)" } : undefined}
+            >
+              {word}
+              {i < 2 && "\u00A0"}
+            </motion.span>
+          ))}
         </h1>
 
         <Subtext text="Photo or text. Clean steps. No fluff." />
       </motion.div>
 
-      <div className="w-full max-w-lg relative mb-8">
+      <motion.div
+        initial={{ opacity: 0, y: 24, filter: "blur(6px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        transition={{ duration: 0.55, delay: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className="w-full max-w-lg relative mb-8"
+      >
         {/* Input mode */}
         <div className="flex justify-center mb-4">
           <div
@@ -168,11 +187,7 @@ export default function HeroZone({
         </AnimatePresence>
 
         {/* Text input */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3, delay: 0.1 }}
-        >
+        <div>
           <InputBar
             onSubmit={onSubmit}
             isLoading={isLoading}
@@ -182,14 +197,14 @@ export default function HeroZone({
             autoSubmit={!!selectedExample}
             onAutoSubmitDone={onAutoSubmitDone}
           />
-        </motion.div>
-      </div>
+        </div>
+      </motion.div>
 
       {/* Gradient divider */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.12, duration: 0.2 }}
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.75, duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="flex items-center gap-3 w-full max-w-lg mb-6"
       >
         <div
@@ -205,9 +220,9 @@ export default function HeroZone({
 
       {/* Example chips */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.9, duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="w-full max-w-lg"
       >
         <ExampleChips onSelect={onExampleSelect} />
