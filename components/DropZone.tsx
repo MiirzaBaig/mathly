@@ -107,19 +107,24 @@ export default function DropZone({ onImage, onError, compact = false }: DropZone
 
       <motion.div
         className="relative cursor-pointer select-none"
+        animate={{
+          borderColor: isDragOver ? "rgba(139,92,246,0.95)" : "#2a2a2e",
+          backgroundColor: isDragOver ? "rgba(139,92,246,0.06)" : "var(--bg-card)",
+        }}
+        transition={{ duration: 0.18, ease: "easeOut" }}
         style={{
           padding: "2.5rem 1.5rem",
           textAlign: "center",
           borderRadius: 12,
-          background: "var(--bg-card)",
-          border: `1px dashed ${isDragOver ? "var(--accent-solid)" : "#2a2a2e"}`,
-          transition: "border-color 150ms, background 150ms",
+          borderStyle: "dashed",
+          borderWidth: 1,
         }}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onClick={() => fileInputRef.current?.click()}
         whileTap={{ scale: 0.99 }}
+        whileHover={{ scale: 1.005 }}
       >
         <div className="flex justify-center mb-4">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={isDragOver ? "var(--accent-solid)" : "var(--text-muted)"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -144,6 +149,7 @@ export default function DropZone({ onImage, onError, compact = false }: DropZone
         whileTap={{ scale: 0.98 }}
         onClick={(e) => { e.stopPropagation(); cameraInputRef.current?.click(); }}
         className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium"
+        whileHover={{ scale: 1.01 }}
         style={{
           background: "transparent",
           border: "1px solid #2a2a2e",

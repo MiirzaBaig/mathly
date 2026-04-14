@@ -16,8 +16,8 @@ export default function ImagePreview({ src, ocrText }: ImagePreviewProps) {
       <div
         className="relative rounded-xl overflow-hidden flex-shrink-0"
         style={{
-          width: 80,
-          height: 80,
+          width: 72,
+          height: 72,
           border: "1px solid var(--border-subtle)",
           background: "var(--bg-card)",
         }}

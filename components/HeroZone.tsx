@@ -1,9 +1,11 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
 import DropZone from "./DropZone";
 import InputBar from "./InputBar";
 import ExampleChips from "./ExampleChips";
+import DrawPad from "./DrawPad";
 
 interface HeroZoneProps {
   onSubmit: (text: string, imageBase64?: string) => void;
@@ -59,6 +61,8 @@ export default function HeroZone({
   selectedExample,
   onAutoSubmitDone,
 }: HeroZoneProps) {
+  const [inputMode, setInputMode] = useState<"photo" | "draw">("photo");
+
   return (
     <div className="flex flex-col items-center px-4 pt-32 pb-10 min-h-dvh">
       {/* Headline */}
@@ -94,15 +98,74 @@ export default function HeroZone({
       </motion.div>
 
       <div className="w-full max-w-lg relative mb-8">
-        {/* Drop zone */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3, delay: 0.05 }}
-          className="mb-6"
-        >
-          <DropZone onImage={(b64) => onSubmit("Solve this math problem", b64)} onError={onError} />
-        </motion.div>
+        {/* Input mode */}
+        <div className="flex justify-center mb-4">
+          <div
+            className="inline-flex items-center p-1 rounded-full"
+            style={{
+              background: "transparent",
+              border: "1px solid #2a2a2e",
+              boxShadow: "none",
+            }}
+          >
+            {([
+              ["photo", "PHOTO"],
+              ["draw", "DRAW"],
+            ] as const).map(([mode, label]) => (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => setInputMode(mode)}
+                className="relative px-4 sm:px-6 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] rounded-full transition-colors"
+                style={{
+                  color: inputMode === mode ? "white" : "var(--text-muted)",
+                  zIndex: 1,
+                }}
+              >
+                {inputMode === mode && (
+                  <motion.div
+                    layoutId="hero-mode-pill"
+                    className="absolute inset-0 rounded-full"
+                    style={{ background: "var(--accent-solid)", boxShadow: "none" }}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">{label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Photo / Draw content */}
+        <AnimatePresence mode="wait" initial={false}>
+          {inputMode === "photo" ? (
+            <motion.div
+              key="photo"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              className="mb-6"
+            >
+              <DropZone onImage={(b64) => onSubmit("Solve this math problem", b64)} onError={onError} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="draw"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              className="mb-6"
+            >
+              <DrawPad
+                disabled={isLoading || isExhausted}
+                onError={onError}
+                onSubmitImage={(b64) => onSubmit("Solve this math problem", b64)}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Text input */}
         <motion.div

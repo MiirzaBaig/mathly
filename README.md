@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# mathly
 
-## Getting Started
+clean step-by-step math. photo, text, or draw.
 
-First, run the development server:
+### preview
+- **vercel**: `https://mathy-sigma.vercel.app/`
 
+### what it does
+- **solve mode**: drop a photo, use camera, type a problem, or draw it → get clean step cards
+- **stepspeak**: every step has **why / move / check** toggles so it teaches without essays
+- **practice mode**: drill/timed/exam sheets generated from what you just solved (with “explain this one” jump)
+- **exam rescue**: a quick-access drawer with saveable cards when you need speed
+- **history**: sessions save automatically + you can restore past solves
+- **ocr + math rendering**: ocr text is shown, math renders with katex
+
+### the vibe / ui
+- matte dark theme + one accent violet
+- minimal motion (fast fades + staggers), mobile friendly
+- glassy floating nav, clean inputs, clean cards
+
+### run it locally
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### env
+create `.env.local`:
+```bash
+MATHGO_API_KEY=your_key_here
+NEXT_PUBLIC_USE_MOCK=false
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### stack
+- next.js (app router) + typescript
+- tailwind css
+- framer motion
+- katex (remark-math + rehype-katex)

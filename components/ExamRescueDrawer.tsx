@@ -31,21 +31,21 @@ export default function ExamRescueDrawer({ cards }: ExamRescueDrawerProps) {
         onClick={() => setOpen(true)}
         className="fixed z-40 flex items-center justify-center rounded-full"
         style={{
-          bottom: 100,
-          right: 20,
+          bottom: "calc(env(safe-area-inset-bottom) + 96px)",
+          right: "calc(env(safe-area-inset-right) + 16px)",
           width: 52,
           height: 52,
-          background: "linear-gradient(135deg, #06b6d4, #0891b2)",
-          boxShadow: "0 8px 24px rgba(6,182,212,0.35), 0 0 40px rgba(6,182,212,0.15)",
-          border: "1px solid rgba(255,255,255,0.15)",
+          background: "var(--accent-solid)",
+          boxShadow: "0 10px 26px rgba(0,0,0,0.42)",
+          border: "1px solid rgba(255,255,255,0.10)",
         }}
-        whileHover={{ scale: 1.08 }}
+        whileHover={{ scale: 1.06 }}
         whileTap={{ scale: 0.95 }}
         title="Exam Rescue"
         aria-label="Open exam rescue tools"
       >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10" />
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <path d="M12 2l7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4z" />
           <path d="M12 8v4M12 16h.01" />
         </svg>
       </motion.button>

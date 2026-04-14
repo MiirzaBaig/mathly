@@ -84,14 +84,22 @@ export default function PracticeView({ problem, onFollowup, onSwitchToSolve }: P
             <button
               key={mode}
               onClick={() => setPracticeMode(mode)}
-              className="px-3.5 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-[0.14em] transition-all"
+              className="relative px-3.5 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-[0.14em] transition-all overflow-hidden"
               style={{
-                background: practiceMode === mode ? "rgba(37,99,235,0.2)" : "rgba(255,255,255,0.035)",
-                border: practiceMode === mode ? "1px solid rgba(37,99,235,0.44)" : "1px solid var(--border-subtle)",
-                color: practiceMode === mode ? "#93c5fd" : "var(--text-secondary)",
+                background: "rgba(255,255,255,0.035)",
+                border: "1px solid var(--border-subtle)",
+                color: practiceMode === mode ? "var(--text-primary)" : "var(--text-secondary)",
               }}
             >
-              {mode}
+              {practiceMode === mode && (
+                <motion.div
+                  layoutId="practice-mode-pill"
+                  className="absolute inset-0"
+                  style={{ background: "rgba(139,92,246,0.16)" }}
+                  transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                />
+              )}
+              <span className="relative">{mode}</span>
             </button>
           ))}
         </div>
@@ -103,14 +111,22 @@ export default function PracticeView({ problem, onFollowup, onSwitchToSolve }: P
           <button
             key={count}
             onClick={() => setPracticeCount(count as 5 | 10 | 20)}
-            className="px-3.5 py-1.5 rounded-full text-[11px] font-semibold transition-all"
+            className="relative px-3.5 py-1.5 rounded-full text-[11px] font-semibold transition-all overflow-hidden"
             style={{
-              background: practiceCount === count ? "rgba(6,182,212,0.18)" : "rgba(255,255,255,0.035)",
-              border: practiceCount === count ? "1px solid rgba(6,182,212,0.4)" : "1px solid var(--border-subtle)",
-              color: practiceCount === count ? "#67e8f9" : "var(--text-secondary)",
+              background: "rgba(255,255,255,0.035)",
+              border: "1px solid var(--border-subtle)",
+              color: practiceCount === count ? "var(--text-primary)" : "var(--text-secondary)",
             }}
           >
-            {count}Q
+            {practiceCount === count && (
+              <motion.div
+                layoutId="practice-count-pill"
+                className="absolute inset-0"
+                style={{ background: "rgba(139,92,246,0.14)" }}
+                transition={{ type: "spring", stiffness: 420, damping: 32 }}
+              />
+            )}
+            <span className="relative">{count}Q</span>
           </button>
         ))}
         <button

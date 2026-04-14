@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@types/katex": "^0.16.8",
+    "@vercel/analytics": "^2.0.1",
     "framer-motion": "^12.38.0",
     "katex": "^0.16.45",
     "next": "16.2.3",
