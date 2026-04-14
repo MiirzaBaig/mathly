@@ -81,10 +81,12 @@ export default function PracticeView({ problem, onFollowup, onSwitchToSolve }: P
         {/* Controls */}
         <div className="flex flex-wrap gap-2.5">
           {(["drill", "timed", "exam"] as const).map((mode) => (
-            <button
+            <motion.button
               key={mode}
               onClick={() => setPracticeMode(mode)}
               className="relative px-3.5 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-[0.14em] transition-all overflow-hidden"
+              whileHover={{ y: -1, scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               style={{
                 background: "rgba(255,255,255,0.035)",
                 border: "1px solid var(--border-subtle)",
@@ -100,7 +102,7 @@ export default function PracticeView({ problem, onFollowup, onSwitchToSolve }: P
                 />
               )}
               <span className="relative">{mode}</span>
-            </button>
+            </motion.button>
           ))}
         </div>
       </div>
@@ -108,10 +110,12 @@ export default function PracticeView({ problem, onFollowup, onSwitchToSolve }: P
       {/* Count + Actions */}
       <div className="flex flex-wrap gap-2.5">
         {[5, 10, 20].map((count) => (
-          <button
+          <motion.button
             key={count}
             onClick={() => setPracticeCount(count as 5 | 10 | 20)}
             className="relative px-3.5 py-1.5 rounded-full text-[11px] font-semibold transition-all overflow-hidden"
+            whileHover={{ y: -1, scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             style={{
               background: "rgba(255,255,255,0.035)",
               border: "1px solid var(--border-subtle)",
@@ -127,7 +131,7 @@ export default function PracticeView({ problem, onFollowup, onSwitchToSolve }: P
               />
             )}
             <span className="relative">{count}Q</span>
-          </button>
+          </motion.button>
         ))}
         <button
           onClick={() => setPracticeSeed((s) => s + 1)}

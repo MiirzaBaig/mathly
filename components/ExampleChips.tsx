@@ -25,6 +25,7 @@ export default function ExampleChips({ onSelect }: ExampleChipsProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.05 * i + 0.1, duration: 0.2 }}
+            whileHover={{ y: -2, scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => onSelect(ex.value)}
             className="px-4 py-2 text-sm font-medium rounded-full"

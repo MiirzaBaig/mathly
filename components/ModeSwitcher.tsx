@@ -20,10 +20,12 @@ export default function ModeSwitcher({ mode, onChange }: ModeSwitcherProps) {
       }}
     >
       {(["solve", "practice"] as const).map((m) => (
-        <button
+        <motion.button
           key={m}
           onClick={() => onChange(m)}
           className="relative px-4 sm:px-6 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] rounded-full transition-colors"
+          whileHover={{ scale: mode === m ? 1 : 1.03 }}
+          whileTap={{ scale: 0.97 }}
           style={{
             color: mode === m ? "white" : "var(--text-muted)",
             zIndex: 1,
@@ -41,7 +43,7 @@ export default function ModeSwitcher({ mode, onChange }: ModeSwitcherProps) {
             />
           )}
           <span className="relative z-10">{m}</span>
-        </button>
+        </motion.button>
       ))}
     </div>
   );
