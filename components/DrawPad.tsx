@@ -9,6 +9,10 @@ function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
 }
 
+function isNearWhite(r: number, g: number, b: number) {
+  return r > 245 && g > 245 && b > 245;
+}
+
 function stripDataUrlPrefix(dataUrl: string) {
   return dataUrl.split(",")[1] ?? "";
 }
@@ -52,6 +56,28 @@ function createExportFromCanvas(
   ctx.fillRect(0, 0, out.width, out.height);
   ctx.drawImage(canvas, crop.x, crop.y, crop.w, crop.h, 0, 0, out.width, out.height);
 
+  // Normalize to black ink on white for better OCR (even if user drew in color).
+  const img = ctx.getImageData(0, 0, out.width, out.height);
+  const d = img.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const r = d[i]!;
+    const g = d[i + 1]!;
+    const b = d[i + 2]!;
+    // Turn any non-white pixel into solid black.
+    if (!isNearWhite(r, g, b)) {
+      d[i] = 0;
+      d[i + 1] = 0;
+      d[i + 2] = 0;
+      d[i + 3] = 255;
+    } else {
+      d[i] = 255;
+      d[i + 1] = 255;
+      d[i + 2] = 255;
+      d[i + 3] = 255;
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+
   const dataUrl = out.toDataURL("image/png");
   return stripDataUrlPrefix(dataUrl);
 }
@@ -73,6 +99,19 @@ export default function DrawPad({
 
   const [tool, setTool] = useState<Tool>("pen");
   const [stroke, setStroke] = useState(10);
+  const [ink, setInk] = useState("#f8fafc");
+
+  const palette = useMemo(
+    () =>
+      [
+        { name: "ice", value: "#f8fafc" },
+        { name: "violet", value: "#8b5cf6" },
+        { name: "cyan", value: "#22d3ee" },
+        { name: "lime", value: "#a3e635" },
+        { name: "pink", value: "#fb7185" },
+      ] as const,
+    []
+  );
 
   const colors = useMemo(
     () => ({
@@ -147,7 +186,7 @@ export default function DrawPad({
         ctx.strokeStyle = "rgba(0,0,0,1)";
       } else {
         ctx.globalCompositeOperation = "source-over";
-        ctx.strokeStyle = "#0b0b0d";
+        ctx.strokeStyle = ink;
       }
 
       ctx.beginPath();
@@ -164,7 +203,7 @@ export default function DrawPad({
         bboxRef.current = b;
       }
     },
-    [stroke, tool]
+    [stroke, tool, ink]
   );
 
   useEffect(() => {
@@ -228,10 +267,11 @@ export default function DrawPad({
   return (
     <div className="space-y-3">
       <div
-        className="flex flex-wrap items-center justify-between gap-2"
+        className="flex flex-col gap-3"
         style={{ color: "var(--text-secondary)" }}
       >
-        <div className="flex flex-wrap items-center gap-2">
+        {/* tools */}
+        <div className="flex flex-wrap items-center justify-center gap-2">
           {([
             ["pen", "Pen"],
             ["eraser", "Eraser"],
@@ -256,6 +296,34 @@ export default function DrawPad({
 
           <div className="flex items-center gap-2 pl-1">
             <span className="text-[11px] font-semibold uppercase tracking-[0.18em]" style={{ color: "var(--text-muted)" }}>
+              color
+            </span>
+            <div className="flex items-center gap-1.5">
+              {palette.map((c) => {
+                const active = ink === c.value;
+                return (
+                  <button
+                    key={c.value}
+                    type="button"
+                    onClick={() => setInk(c.value)}
+                    className="rounded-full"
+                    aria-label={`Ink color: ${c.name}`}
+                    title={c.name}
+                    style={{
+                      width: 18,
+                      height: 18,
+                      background: c.value,
+                      border: active ? "2px solid rgba(255,255,255,0.85)" : "1px solid rgba(255,255,255,0.18)",
+                      boxShadow: active ? "0 0 0 3px rgba(139,92,246,0.18)" : "none",
+                    }}
+                  />
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 pl-1">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.18em]" style={{ color: "var(--text-muted)" }}>
               size
             </span>
             <input
@@ -270,7 +338,8 @@ export default function DrawPad({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* actions */}
+        <div className="flex items-center justify-center gap-2">
           <button
             type="button"
             onClick={clear}
